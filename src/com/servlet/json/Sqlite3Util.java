@@ -43,7 +43,9 @@ public class Sqlite3Util {
         return connection;
     }
 
-    private static final String GET_ALL_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} ORDER BY id DESC LIMIT " + PAGE_SIZE;
+    private static final String GET_ALL_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} ORDER BY id DESC LIMIT {1}";
+
+    private static final String GET_PM_COUNT = "SELECT COUNT(*) as total FROM " + TABLE_PM + " where user_id = {0}" ;
 
     private static final String GET_BEFORE_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} AND id < {1} ORDER BY id DESC LIMIT " + PAGE_SIZE;
     private static final String LOGIN_SQL = "select * from " + TABLE_USER + " where name = ''{0}'' AND passwd = ''{1}''";
@@ -136,15 +138,14 @@ public class Sqlite3Util {
      * @return
      * @throws SQLException
      */
-    public static ArrayList<PMEntity> getBeforePMEntity(int id, int userId) throws SQLException {
+    public static ArrayList<PMEntity> getBeforePMEntity(int draw, int userId) throws SQLException {
 
         Connection connection = getConnection();
         Statement stat = connection.createStatement();
         ResultSet rs = null;
-
         ArrayList<PMEntity> entities = new ArrayList<>();
         try {
-            rs = stat.executeQuery(MessageFormat.format(GET_BEFORE_PM_DATA, userId, id));
+            rs = stat.executeQuery(MessageFormat.format(GET_ALL_PM_DATA, userId, (draw - 1) * PAGE_SIZE + "," + draw * PAGE_SIZE);
             while (rs.next()) {
                 PMEntity entity = getPMEntityFromResult(rs);
                 entities.add(entity);
@@ -195,6 +196,10 @@ public class Sqlite3Util {
             }
         }
         return entities;
+    }
+
+    public static int getPMCount() {
+        return 0;
     }
 
 

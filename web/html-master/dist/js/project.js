@@ -63,8 +63,10 @@ table = $("#example2").DataTable({
     "language": {"url": "../../dist/json/Chinese.json"},
     "fixedHeader": true,
     "bJqueryUI": true,
-    "order": [[0, "desc"]],
+    // "order": [[0, "desc"]],
     "paging": true,
+    "processing": true,
+    "serverSide": true,
     "lengthChange": false,
     "searching": false,
     "ordering": true,
@@ -76,10 +78,12 @@ table = $("#example2").DataTable({
         url: get_pm_data,
         type: "GET",
         dataSrc: function (data) {
-            console.log("---------> " + data);
-            console.log(typeof data);
-            for (var i = 0; i < data.length; i++) {
-                var entry = data[i];
+            console.log("---------> " + data.data);
+
+            var result = data.data;
+            console.log(typeof result);
+            for (var i = 0; i < result.length; i++) {
+                var entry = result[i];
                 console.log(entry);
                 var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
                 var Y = date.getFullYear() + '-';
@@ -93,7 +97,7 @@ table = $("#example2").DataTable({
                 }
                 entry.time = Y + M + D + h + m + s;
             }
-            return data;
+            return result;
         },
         error: function (data) {
             sweetAlert("请求失败!");
@@ -109,7 +113,7 @@ table = $("#example2").DataTable({
     "columnDefs": [
         {responsivePriority: 1, target: 1},
         {responsivePriority: 2, target: 2},
-        {"width": "5%", "target": 0},
+        // {"width": "5%", "target": 0},
         // {targets: [3], visible: false},
         {className: "dt-center", "targets": [0, 1, 2, 3, 4]}
         // {

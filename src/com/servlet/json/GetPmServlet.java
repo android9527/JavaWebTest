@@ -2,6 +2,7 @@ package com.servlet.json;
 
 import com.servlet.BaseServlet;
 import com.servlet.json.entity.PMEntity;
+import com.servlet.json.entity.PMModel;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,6 +42,7 @@ public class GetPmServlet extends BaseServlet {
     public void getData(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try {
+            String draw = request.getParameter("draw");
             ServletOutputStream outputStream = response.getOutputStream();
             String id = request.getParameter("id");
             String user_id = request.getParameter("user_id");
@@ -53,7 +55,13 @@ public class GetPmServlet extends BaseServlet {
             } else {
                 entities.addAll(Sqlite3Util.getBeforePMEntity(Integer.parseInt(id), Integer.parseInt(user_id)));
             }
-            outputStream.write(gson.toJson(entities).getBytes("UTF-8"));
+
+            PMModel model = new PMModel();
+            model.setDraw(draw);
+            model.setRecordsFiltered(20);
+            model.setRecordsTotal(20);
+            model.setEntities(entities);
+            outputStream.write(gson.toJson(model).getBytes("UTF-8"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
