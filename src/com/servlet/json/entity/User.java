@@ -9,6 +9,7 @@ public class User {
     private String name;
     private String password;
     private String img;
+    private String error;
 
     public int getId() {
         return id;
@@ -40,6 +41,14 @@ public class User {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     @Override

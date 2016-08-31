@@ -2,9 +2,11 @@ package com.servlet.json;
 
 import com.servlet.json.entity.Order;
 import com.servlet.json.entity.PMEntity;
+import com.servlet.json.entity.User;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,6 +14,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class Sqlite3Util {
+
+    private static final String TABLE_PM = "pm";
+    private static final String TABLE_USER= "user_table";
+
 
     public static Connection connection;
 
@@ -35,7 +41,10 @@ public class Sqlite3Util {
 
     private static final String updatesql = "update t_idioms set idiom=?, description=?, level=?, image=?, difficulty=?, pinyin=?, sortOrder=? where id=?";
 
-    private static final String GET_ALL_PM_DATA = "select * from pm where user_id = {0}";
+    private static final String GET_ALL_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0}";
+    private static final String LOGIN_SQL = "select * from " + TABLE_USER + " where name = ''{0}'' AND passwd = ''{1}''";
+
+    private static final String INSET_PM_SQL = "insert into " + TABLE_PM + " (time, value, user_id, other) values (?, ?, ?, ?);";
 
     /**
      * 保存
@@ -215,6 +224,72 @@ public class Sqlite3Util {
         return entities;
     }
 
+    /**
+     * login
+     *
+     * @param userName
+     * @param password
+     * @return
+     */
+    public static User login(String userName, String password) {
+        Connection connection = getConnection();
+        ResultSet rs = null;
+        try {
+            Statement stat = connection.createStatement();
+            rs = stat.executeQuery(MessageFormat.format(LOGIN_SQL, userName, password));
+            if (rs != null && rs.next())
+                return getUserFromResult(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static User getUserFromResult(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getInt("id"));
+        user.setName(rs.getString("name"));
+        user.setPassword(rs.getString("passwd"));
+        user.setImg(rs.getString("img"));
+        return user;
+    }
+
+    public static boolean insertPMEntity(PMEntity entity) {
+        Connection connection = getConnection();
+        PreparedStatement prep = null;
+        try {
+            prep = connection.prepareStatement(INSET_PM_SQL);
+            prep.setString(1, entity.getTime());
+            prep.setString(2, entity.getValue());
+            prep.setInt(3, entity.getUserId());
+            prep.setString(4, entity.getOther());
+            prep.addBatch();
+            connection.setAutoCommit(false);
+            prep.executeBatch();
+            connection.setAutoCommit(true);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (prep != null) {
+                try {
+                    prep.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 执行Sql
@@ -229,7 +304,6 @@ public class Sqlite3Util {
         Statement statement = connection.createStatement();
 
         statement.execute(sql);
-
     }
 
 }

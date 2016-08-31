@@ -1287,8 +1287,10 @@
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
 <script src="../../dist/js/constant.js"></script>
+<script src="../../dist/js/project.js"></script>
 <!-- page script -->
 <script>
+    console.log("---------> " + user.name());
     $(function () {
         $("#example1").DataTable();
         $('#example2').DataTable({
@@ -1297,84 +1299,57 @@
             "searching": false,
             "ordering": true,
             "info": true,
-            "autoWidth": false
+            "autoWidth": false,
+            "bDestroy": true
         });
     });
 </script>
-<script>
-    //    $(document).ready(function(){
-    //        $("button").click(function(){
-    //            $.get(get_pm_data,function(data,status){
-    //                alert("数据：" + data + "\n状态：" + status);
-    //            });
-    //        });
-    //    });
+<!--<script>-->
+    <!--$(document).ready(function () {-->
+        <!--var submit_form = function () {-->
+<!--//            showloading("loading");-->
+            <!--console.log("&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;");-->
+            <!--$.get({url: get_pm_data}, {}, function (data) {-->
 
-    $(document).ready(function () {
-        var submit_form = function () {
-//            showloading("loading");
-            console.log("--------------------");
-            $.get({url: get_pm_data}, {}, function (data) {
+<!--//                hiddenloading("loading");-->
+                <!--var result = JSON.parse(data);-->
+                <!--console.log(typeof result);-->
+                <!--for (var i = 0; i < result.length; i++) {-->
+                    <!--var entry = result[i];-->
+                    <!--console.log(entry);-->
+                    <!--var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了-->
+                    <!--var Y = date.getFullYear() + '-';-->
+                    <!--var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';-->
+                    <!--var D = date.getDate() + ' ';-->
+                    <!--var h = date.getHours() + ':';-->
+                    <!--var m = date.getMinutes() + ':';-->
+                    <!--var s = date.getSeconds();-->
+                    <!--if (s < 10) {-->
+                        <!--s = "0" + s;-->
+                    <!--}-->
+                    <!--var dom = "<tr class='odd gradeA'>"-->
+                            <!--+ "<td>" + entry.id + "</td>"-->
+                            <!--+ "<td>" + Y + M + D + h + m + s + "</td>"-->
+                            <!--+ "<td>稳定最新版本</td>"-->
+                            <!--+ "<td class='center' style='word-wrap:break-word;'>"-->
+                            <!--+ "<a href='http://172.100.102.101:8080/jenkins/view/App(Android)/job/" +-->
+                            <!--"Near_Merchant_Android/ws/presentation/build/outputs/apk/Near_Merchant_"-->
+                            <!--+ entry.userId + "Release.apk'>Near_Merchant_ + "-->
+                            <!--+ entry.userId + "Release.apk</a>"-->
+                            <!--+ "</td>"-->
+                            <!--+ "</tr>";-->
 
-//                success: function ( json ) {
-//                    _fnLanguageCompat( json );
-//                    _fnCamelToHungarian( defaults.oLanguage, json );
-//                    $.extend( true, oLanguage, json );
-//                    _fnInitialise( oSettings );
-//                },
-//                error: function () {
-//                    // Error occurred loading language file, continue on as best we can
-//                    _fnInitialise( oSettings );
-//                }
+<!--//                    $("tbody#tbody").append(dom);-->
 
-//                hiddenloading("loading");
-                console.log("--------->" + data);
-//                                        var result = JSON.parse(data.result);
-                var result = JSON.parse(data);
-                console.log(typeof result);
-                for (var i = 0; i < result.length; i++) {
-                    var entry = result[i];
-                    console.log(entry);
-                    var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
-                    var Y = date.getFullYear() + '-';
-                    var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-                    var D = date.getDate() + ' ';
-                    var h = date.getHours() + ':';
-                    var m = date.getMinutes() + ':';
-                    var s = date.getSeconds();
-                    if (s < 10) {
-                        s = "0" + s;
-                    }
-//                    var ss = ':' + date.getMilliseconds();
+                <!--}-->
 
-                    var dom = "<tr class='odd gradeA'>"
-                            + "<td>" + entry.id + "</td>"
-                            + "<td>" + Y + M + D + h + m + s + "</td>"
-                            + "<td>稳定最新版本</td>"
-                            + "<td class='center' style='word-wrap:break-word;'>"
-                            + "<a href='http://172.100.102.101:8080/jenkins/view/App(Android)/job/" +
-                            "Near_Merchant_Android/ws/presentation/build/outputs/apk/Near_Merchant_"
-                            + entry.userId + "Release.apk'>Near_Merchant_ + "
-                            + entry.userId + "Release.apk</a>"
-                            + "</td>"
-                            + "</tr>";
-
-                    $("tbody#tbody").append(dom);
-
-                }
-
-            });
-            return false;
-        };
-        console.log("--------->");
-//        $('a#test_build').bind('click', submit_form);
-//        $('input[type=text]').bind('keydown', function (e) {
-//            if (e.keyCode == 13) {
-        submit_form();
-//            }
-//        });
-    });
-
+            <!--});-->
+            <!--return false;-->
+        <!--};-->
+        <!--console.log("-&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;");-->
+        <!--submit_form();-->
+    <!--});-->
+<!--</script>-->
 </body>
 
 </html>

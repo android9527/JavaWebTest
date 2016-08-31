@@ -13,11 +13,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class JSONServlet extends BaseServlet {
+public class GetPmServlet extends BaseServlet {
 
     private static final long serialVersionUID = 1L;
 
-    public JSONServlet() {
+    public GetPmServlet() {
         super();
     }
 
