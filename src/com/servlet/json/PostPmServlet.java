@@ -25,6 +25,8 @@ public class PostPmServlet extends BaseServlet {
         String userId = req.getParameter("user_id");
         String value = req.getParameter("value"); // Pm value
         String other = req.getParameter("other");
+        String temperature = req.getParameter("temperature");
+        String humidity = req.getParameter("humidity");
         PMEntity entity = new PMEntity();
         if (StringUtils.isEmpty(userId))
             userId = "1";
@@ -32,6 +34,8 @@ public class PostPmServlet extends BaseServlet {
         entity.setValue(value);
         entity.setOther(other);
         entity.setTime(System.currentTimeMillis() + "");
+        entity.setTemperature(temperature);
+        entity.setHumidity(humidity);
         boolean result = Sqlite3Util.insertPMEntity(entity);
         ServletOutputStream outputStream = resp.getOutputStream();
         outputStream.write(("{\"result\": " + result + " }").getBytes("UTF-8"));

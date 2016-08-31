@@ -62,10 +62,16 @@ table = $("#example2").DataTable({
     "responsive": {"details": {"type": "column", "target": "tr"}},
     "language": {"url": "../../dist/json/Chinese.json"},
     "fixedHeader": true,
-    "autoWidth": false,
     "bJqueryUI": true,
-    "order": [[1, "asc"]],
-    "lengthMenu": [[50, 100, -1], [50, 100, "ALL"]],
+    "order": [[0, "desc"]],
+    "paging": true,
+    "lengthChange": false,
+    "searching": false,
+    "ordering": true,
+    "info": true,
+    "autoWidth": false,
+    "bDestroy": true,
+    "lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ALL"]],
     "ajax": {
         url: get_pm_data,
         type: "GET",
@@ -97,15 +103,15 @@ table = $("#example2").DataTable({
         {data: 'id'},
         {data: 'time'},
         {data: 'value'},
-        {data: 'userId'},
-        {data: null}
+        {data: 'temperature'},
+        {data: 'humidity'}
     ],
     "columnDefs": [
         {responsivePriority: 1, target: 1},
         {responsivePriority: 2, target: 2},
         {"width": "5%", "target": 0},
-        {targets: [3], visible: false},
-        {className: "dt-center", "targets": [0, 1, 2, 3, 4]},
+        // {targets: [3], visible: false},
+        {className: "dt-center", "targets": [0, 1, 2, 3, 4]}
         // {
         //     "targets": -1,
         //     "data": "",
@@ -115,9 +121,9 @@ table = $("#example2").DataTable({
             //     return (editstr + delstr);
             // }
         // },
-    ]
-});
+    ],
 
+});
 
 $('#contentAdd').submit(function (e) {
     e.preventDefault();
@@ -148,6 +154,7 @@ $('#contentAdd').submit(function (e) {
         }
     });
 });
+
 
 $('#contentEdit').submit(function (e) {
     var data = {

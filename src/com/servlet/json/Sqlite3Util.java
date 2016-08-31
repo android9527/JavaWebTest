@@ -4,6 +4,8 @@ import com.servlet.json.entity.Order;
 import com.servlet.json.entity.PMEntity;
 import com.servlet.json.entity.User;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,11 +15,15 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+/**
+ * 数据库连接 sql
+ */
 public class Sqlite3Util {
 
     private static final String TABLE_PM = "pm";
-    private static final String TABLE_USER= "user_table";
+    private static final String TABLE_USER = "user_table";
 
+    private static final int PAGE_SIZE = 10;
 
     public static Connection connection;
 
@@ -37,94 +43,12 @@ public class Sqlite3Util {
         return connection;
     }
 
-    private static final String savesql = "insert into Orders(Customer, OrderDate, OrderPrice) values (?, ?, ?);";
+    private static final String GET_ALL_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} ORDER BY id DESC LIMIT " + PAGE_SIZE;
 
-    private static final String updatesql = "update t_idioms set idiom=?, description=?, level=?, image=?, difficulty=?, pinyin=?, sortOrder=? where id=?";
-
-    private static final String GET_ALL_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0}";
+    private static final String GET_BEFORE_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} AND id < {1} ORDER BY id DESC LIMIT " + PAGE_SIZE;
     private static final String LOGIN_SQL = "select * from " + TABLE_USER + " where name = ''{0}'' AND passwd = ''{1}''";
 
-    private static final String INSET_PM_SQL = "insert into " + TABLE_PM + " (time, value, user_id, other) values (?, ?, ?, ?);";
-
-    /**
-     * 保存
-     *
-     * @param idiom
-     * @return
-     * @throws SQLException
-     */
-//    public static Idiom save(Idiom idiom) throws SQLException {
-//
-//        Connection connection = getConnection();
-//
-//        PreparedStatement prep = connection.prepareStatement(savesql);
-//
-//        prep.setString(1, idiom.getIdiom());
-//        prep.setString(2, idiom.getDescription());
-//        prep.setInt(3, idiom.getLevel());
-//        prep.setBytes(4, idiom.getImage());
-//        prep.setInt(5, idiom.getDifficulty());
-//        prep.setString(6, idiom.getPinyin());
-//        prep.setInt(7, idiom.getSortOrder());
-//        prep.addBatch();
-//
-//        connection.setAutoCommit(false);
-//        prep.executeBatch();
-//        connection.setAutoCommit(true);
-//
-//        return idiom;
-//    }
-
-    /**
-     * 修改
-     *
-     * @param idiom
-     * @throws SQLException
-     */
-//    public static void update(Idiom idiom) throws SQLException {
-//        Connection connection = getConnection();
-//
-//        PreparedStatement prep = connection.prepareStatement(updatesql);
-//
-//        prep.setString(1, idiom.getIdiom());
-//        prep.setString(2, idiom.getDescription());
-//        prep.setInt(3, idiom.getLevel());
-//        prep.setBytes(4, idiom.getImage());
-//        prep.setInt(5, idiom.getDifficulty());
-//        prep.setString(6, idiom.getPinyin());
-//        prep.setInt(7, idiom.getSortOrder());
-//        prep.setInt(8, idiom.getId());
-//
-//        connection.setAutoCommit(false);
-//        prep.executeUpdate();
-//        connection.setAutoCommit(true);
-//    }
-
-    /**
-     * 列表
-     *
-     * @param sql
-     * @return
-     * @throws SQLException
-     */
-//    public static List<Idiom> list(String sql) throws SQLException {
-//
-//        Connection connection = getConnection();
-//        Statement stat = connection.createStatement();
-//        ResultSet rs = stat.executeQuery(sql);
-//
-//        List<Idiom> idioms = new ArrayList<>();
-//
-//        Idiom idiom;
-//        while (rs.next()) {
-//            idiom = new Idiom();
-//            readResult(rs, idiom);
-//            idioms.add(idiom);
-//        }
-//        rs.close();
-//
-//        return idioms;
-//    }
+    private static final String INSET_PM_SQL = MessageFormat.format("insert into {0} (time, value, user_id, other, temperature, humidity) values (?, ?, ?, ?, ?, ?);", TABLE_PM);
 
     /**
      * 获取
@@ -133,7 +57,6 @@ public class Sqlite3Util {
      * @throws SQLException
      */
     public static Order get(int id) throws SQLException {
-
         Connection connection = getConnection();
         Statement stat = connection.createStatement();
         ResultSet rs = stat.executeQuery(MessageFormat.format("select * from Orders where O_id = {0}", id));
@@ -149,6 +72,12 @@ public class Sqlite3Util {
     }
 
 
+    /**
+     * 获取所有订单信息
+     *
+     * @return
+     * @throws SQLException
+     */
     public static ArrayList<Order> getAllOrder() throws SQLException {
 
         Connection connection = getConnection();
@@ -185,7 +114,6 @@ public class Sqlite3Util {
         return order;
     }
 
-
     private static PMEntity getPMEntityFromResult(ResultSet rs) throws SQLException {
         PMEntity entity = new PMEntity();
         entity.setId(rs.getInt("id"));
@@ -193,11 +121,56 @@ public class Sqlite3Util {
         entity.setValue(rs.getString("value"));
         entity.setOther(rs.getString("other"));
         entity.setUserId(rs.getInt("user_id"));
+        String temperature = rs.getString("temperature");
+        entity.setTemperature(StringUtils.isEmpty(temperature) ? "" : temperature);
+        String humidity = rs.getString("humidity");
+        entity.setHumidity(StringUtils.isEmpty(humidity) ? "" : humidity);
         return entity;
     }
 
 
-    public static ArrayList<PMEntity> getAllPMEntity(int userId) throws SQLException {
+    /**
+     * 分页获取所有pm数据
+     *
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
+    public static ArrayList<PMEntity> getBeforePMEntity(int id, int userId) throws SQLException {
+
+        Connection connection = getConnection();
+        Statement stat = connection.createStatement();
+        ResultSet rs = null;
+
+        ArrayList<PMEntity> entities = new ArrayList<>();
+        try {
+            rs = stat.executeQuery(MessageFormat.format(GET_BEFORE_PM_DATA, userId, id));
+            while (rs.next()) {
+                PMEntity entity = getPMEntityFromResult(rs);
+                entities.add(entity);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return entities;
+    }
+
+    /**
+     * 获取所有pm数据
+     *
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
+    public static ArrayList<PMEntity> getLastPMEntity(int userId) throws SQLException {
 
         Connection connection = getConnection();
         Statement stat = connection.createStatement();
@@ -223,6 +196,7 @@ public class Sqlite3Util {
         }
         return entities;
     }
+
 
     /**
      * login
@@ -253,6 +227,13 @@ public class Sqlite3Util {
         return null;
     }
 
+    /**
+     * 获取一条数据
+     *
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
     private static User getUserFromResult(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getInt("id"));
@@ -262,6 +243,12 @@ public class Sqlite3Util {
         return user;
     }
 
+    /**
+     * 插入pm数据到数据库
+     *
+     * @param entity
+     * @return
+     */
     public static boolean insertPMEntity(PMEntity entity) {
         Connection connection = getConnection();
         PreparedStatement prep = null;
@@ -271,6 +258,8 @@ public class Sqlite3Util {
             prep.setString(2, entity.getValue());
             prep.setInt(3, entity.getUserId());
             prep.setString(4, entity.getOther());
+            prep.setString(5, entity.getTemperature());
+            prep.setString(6, entity.getHumidity());
             prep.addBatch();
             connection.setAutoCommit(false);
             prep.executeBatch();

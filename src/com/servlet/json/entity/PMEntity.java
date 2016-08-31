@@ -10,6 +10,8 @@ public class PMEntity {
     private String time;
     private String value;
     private String other;
+    private String temperature; // 温度
+    private String humidity; // 湿度
 
     public int getId() {
         return id;
@@ -49,5 +51,21 @@ public class PMEntity {
 
     public void setOther(String other) {
         this.other = other;
+    }
+
+    public String getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(String temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(String humidity) {
+        this.humidity = humidity;
     }
 }
