@@ -78,8 +78,8 @@ table = $("#example2").DataTable({
         url: get_pm_data,
         type: "GET",
         dataSrc: function (data) {
+            console.log("-------->" + user.name); //net
             var result = data.data;
-            console.log(typeof result);
             for (var i = 0; i < result.length; i++) {
                 var entry = result[i];
                 var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
@@ -103,7 +103,7 @@ table = $("#example2").DataTable({
             return result;
         },
         error: function (data) {
-            sweetAlert("请求失败!");
+            alert("请求失败!");
         }
     },
     columns: [

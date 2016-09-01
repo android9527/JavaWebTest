@@ -19,13 +19,14 @@ function login() {
                     resetuser();
                     alert(result.error);
                 } else { // 登录成功
-                    user.name = result.name;
-                    user.password = result.password;
-                    user.id = result.id;
-                    user.img = result.img;
+                    fillUser(result);
                     window.location.href="html-master/pages/tables/data.html";
                 }
                 // $(this).resetForm(); // 提交后重置表单
+            },
+            error : function (data) {
+                resetuser();
+                alert("请求失败!");
             }
         });
         $('button#sign_in').unbind('click', login);
