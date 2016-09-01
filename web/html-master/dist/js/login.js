@@ -14,7 +14,6 @@ function login() {
             },
             success: function (data) { // data 保存提交后返回的数据，一般为 json 数据
                 // 此处可对 data 作相关处理
-                console.log("------- > " + data);
                 var result = JSON.parse(data);
                 if (result.error != "") {
                     resetuser();
@@ -24,11 +23,9 @@ function login() {
                     user.password = result.password;
                     user.id = result.id;
                     user.img = result.img;
-                    console.log("------- > " + user.toString());
-
-                    window.location.href="../../index.html";
+                    window.location.href="html-master/pages/tables/data.html";
                 }
-                $(this).resetForm(); // 提交后重置表单
+                // $(this).resetForm(); // 提交后重置表单
             }
         });
         $('button#sign_in').unbind('click', login);

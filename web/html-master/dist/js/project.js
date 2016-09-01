@@ -78,13 +78,10 @@ table = $("#example2").DataTable({
         url: get_pm_data,
         type: "GET",
         dataSrc: function (data) {
-            console.log("---------> " + data.data);
-
             var result = data.data;
             console.log(typeof result);
             for (var i = 0; i < result.length; i++) {
                 var entry = result[i];
-                console.log(entry);
                 var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
                 var Y = date.getFullYear() + '-';
                 var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
