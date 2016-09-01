@@ -23,7 +23,7 @@ public class PostPmServlet extends BaseServlet {
         super.doPost(req, resp);
 
         String userId = req.getParameter("user_id");
-        String value = req.getParameter("value"); // Pm value
+        String value = req.getParameter("pm_value"); // Pm value
         String other = req.getParameter("other");
         String temperature = req.getParameter("temperature");
         String humidity = req.getParameter("humidity");

@@ -30,12 +30,6 @@ public class GetPmServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         super.doGet(request, response);
-        doPost(request, response);
-    }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        super.doPost(request, response);
         getData(request, response);
     }
 
@@ -43,30 +37,41 @@ public class GetPmServlet extends BaseServlet {
 
         try {
             String draw = request.getParameter("draw");
-            ServletOutputStream outputStream = response.getOutputStream();
-            String id = request.getParameter("id");
+            String start = request.getParameter("start");
+            String length = request.getParameter("length");
+//            String id = request.getParameter("id");
             String user_id = request.getParameter("user_id");
             if (StringUtils.isEmpty(user_id)) {
                 user_id = "1";
             }
-            ArrayList<PMEntity> entities = new ArrayList<>();
-            if (StringUtils.isEmpty(id) || id.equals("0")) {
-                entities.addAll(Sqlite3Util.getLastPMEntity(Integer.parseInt(user_id)));
-            } else {
-                entities.addAll(Sqlite3Util.getBeforePMEntity(Integer.parseInt(id), Integer.parseInt(user_id)));
-            }
 
+            int userId = Integer.parseInt(user_id);
+            int total = Sqlite3Util.getPMCount(userId);
             PMModel model = new PMModel();
             model.setDraw(draw);
-            model.setRecordsFiltered(20);
-            model.setRecordsTotal(20);
+            model.setRecordsFiltered(total);
+            model.setRecordsTotal(total);
+            ArrayList<PMEntity> entities = new ArrayList<>();
+            ServletOutputStream outputStream = response.getOutputStream();
+            if (total <= 0) {
+                model.setEntities(entities);
+                outputStream.write(gson.toJson(model).getBytes("UTF-8"));
+                return;
+            }
+            if (StringUtils.isEmpty(draw)) {
+                draw = "1";
+            }
+            if (StringUtils.isEmpty(start)) {
+                start = "0";
+            }
+            if (StringUtils.isEmpty(length)) {
+                length = "10";
+            }
+            entities.addAll(Sqlite3Util.getBeforePMEntity(Integer.parseInt(draw), Integer.parseInt(start), Integer.parseInt(length), userId));
             model.setEntities(entities);
             outputStream.write(gson.toJson(model).getBytes("UTF-8"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void init() throws ServletException {
     }
 }

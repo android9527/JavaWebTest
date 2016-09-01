@@ -12,19 +12,21 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by chenfeiyue on 16/8/30.
+ * BaseServlet
  */
 public class BaseServlet extends HttpServlet {
 
     public static Gson gson = new Gson();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        addHeader(resp);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        addHeader(response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        addHeader(resp);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        addHeader(response);
+
     }
 
 

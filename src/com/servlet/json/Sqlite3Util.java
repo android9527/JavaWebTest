@@ -45,9 +45,9 @@ public class Sqlite3Util {
 
     private static final String GET_ALL_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} ORDER BY id DESC LIMIT {1}";
 
-    private static final String GET_PM_COUNT = "SELECT COUNT(*) as total FROM " + TABLE_PM + " where user_id = {0}" ;
+    private static final String GET_PM_COUNT = "SELECT COUNT(*) as total FROM " + TABLE_PM + " where user_id = {0}";
 
-    private static final String GET_BEFORE_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} AND id < {1} ORDER BY id DESC LIMIT " + PAGE_SIZE;
+    private static final String GET_BEFORE_PM_DATA = "select * from " + TABLE_PM + " where user_id = {0} ORDER BY id DESC LIMIT {1}";
     private static final String LOGIN_SQL = "select * from " + TABLE_USER + " where name = ''{0}'' AND passwd = ''{1}''";
 
     private static final String INSET_PM_SQL = MessageFormat.format("insert into {0} (time, value, user_id, other, temperature, humidity) values (?, ?, ?, ?, ?, ?);", TABLE_PM);
@@ -138,14 +138,16 @@ public class Sqlite3Util {
      * @return
      * @throws SQLException
      */
-    public static ArrayList<PMEntity> getBeforePMEntity(int draw, int userId) throws SQLException {
+    public static ArrayList<PMEntity> getBeforePMEntity(int draw, int start, int length, int userId) throws SQLException {
 
         Connection connection = getConnection();
         Statement stat = connection.createStatement();
         ResultSet rs = null;
         ArrayList<PMEntity> entities = new ArrayList<>();
         try {
-            rs = stat.executeQuery(MessageFormat.format(GET_ALL_PM_DATA, userId, (draw - 1) * PAGE_SIZE + "," + draw * PAGE_SIZE);
+            // select * from pm where user_id = 1 ORDER BY id DESC LIMIT start, draw * length;
+            String sql = MessageFormat.format(GET_BEFORE_PM_DATA, userId, start + ", " + draw * length);
+            rs = stat.executeQuery(sql);
             while (rs.next()) {
                 PMEntity entity = getPMEntityFromResult(rs);
                 entities.add(entity);
@@ -198,7 +200,26 @@ public class Sqlite3Util {
         return entities;
     }
 
-    public static int getPMCount() {
+    public static int getPMCount(int userId) {
+        ResultSet rs = null;
+        try {
+            Connection connection = getConnection();
+            Statement stat = connection.createStatement();
+            rs = stat.executeQuery(MessageFormat.format(GET_PM_COUNT, userId));
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return 0;
     }
 

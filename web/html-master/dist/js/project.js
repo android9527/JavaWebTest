@@ -67,7 +67,7 @@ table = $("#example2").DataTable({
     "paging": true,
     "processing": true,
     "serverSide": true,
-    "lengthChange": false,
+    "lengthChange": true,
     "searching": false,
     "ordering": true,
     "info": true,
@@ -90,7 +90,13 @@ table = $("#example2").DataTable({
                 var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
                 var D = date.getDate() + ' ';
                 var h = date.getHours() + ':';
-                var m = date.getMinutes() + ':';
+                var m = date.getMinutes();
+
+                if (m < 10) {
+                    m = "0" + m;
+                }
+                m = m + ':';
+
                 var s = date.getSeconds();
                 if (s < 10) {
                     s = "0" + s;

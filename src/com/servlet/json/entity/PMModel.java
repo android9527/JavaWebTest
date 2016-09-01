@@ -11,7 +11,7 @@ public class PMModel {
     private int recordsTotal;
     private int recordsFiltered;
 
-    ArrayList<PMEntity> data;
+    private ArrayList<PMEntity> data;
 
     public String getDraw() {
         return draw;
