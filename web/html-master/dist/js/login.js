@@ -16,7 +16,7 @@ function login() {
                 // 此处可对 data 作相关处理
                 var result = JSON.parse(data);
                 if (result.error != "") {
-                    resetuser();
+                    resetUser();
                     alert(result.error);
                 } else { // 登录成功
                     fillUser(result);
@@ -25,7 +25,7 @@ function login() {
                 // $(this).resetForm(); // 提交后重置表单
             },
             error : function (data) {
-                resetuser();
+                resetUser();
                 alert("请求失败!");
             }
         });

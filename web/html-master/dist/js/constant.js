@@ -4,6 +4,7 @@
 var app_url = "http://127.0.0.1:8080";
 var get_pm_data = app_url + "/servlet/GetPmServlet";
 var login_url = app_url + "/servlet/LoginServlet";
+var get_avg_data_url = app_url + "/servlet/GetAvgDataServlet";
 
 user = function () {
     this.name = "";
@@ -11,7 +12,7 @@ user = function () {
     this.id = "";
     this.img = "";
 };
-function resetuser() {
+function resetUser() {
     user.name = "";
     user.password = "";
     user.id = "";

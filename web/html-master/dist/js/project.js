@@ -57,79 +57,79 @@ function _editRow(proj_id, proj_name, git_addr, desc) {
     $("#intro_edit").val(desc);
     $("#myEdit").modal("show");
 }
+$(document).ready(function () {
+    table = $("#example2").DataTable({
+        "responsive": {"details": {"type": "column", "target": "tr"}},
+        "language": {"url": "../../dist/json/Chinese.json"},
+        "fixedHeader": true,
+        "bJqueryUI": true,
+        // "order": [[0, "desc"]],
+        "paging": true,
+        "processing": true,
+        "serverSide": true,
+        "lengthChange": true,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "bDestroy": true,
+        "lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ALL"]],
+        "ajax": {
+            url: get_pm_data,
+            type: "GET",
+            dataSrc: function (data) {
+                console.log("-------->" + user.name); //net
+                var result = data.data;
+                for (var i = 0; i < result.length; i++) {
+                    var entry = result[i];
+                    var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
+                    var Y = date.getFullYear() + '-';
+                    var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                    var D = date.getDate() + ' ';
+                    var h = date.getHours() + ':';
+                    var m = date.getMinutes();
 
-table = $("#example2").DataTable({
-    "responsive": {"details": {"type": "column", "target": "tr"}},
-    "language": {"url": "../../dist/json/Chinese.json"},
-    "fixedHeader": true,
-    "bJqueryUI": true,
-    // "order": [[0, "desc"]],
-    "paging": true,
-    "processing": true,
-    "serverSide": true,
-    "lengthChange": true,
-    "searching": false,
-    "ordering": true,
-    "info": true,
-    "autoWidth": false,
-    "bDestroy": true,
-    "lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ALL"]],
-    "ajax": {
-        url: get_pm_data,
-        type: "GET",
-        dataSrc: function (data) {
-            console.log("-------->" + user.name); //net
-            var result = data.data;
-            for (var i = 0; i < result.length; i++) {
-                var entry = result[i];
-                var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
-                var Y = date.getFullYear() + '-';
-                var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-                var D = date.getDate() + ' ';
-                var h = date.getHours() + ':';
-                var m = date.getMinutes();
+                    if (m < 10) {
+                        m = "0" + m;
+                    }
+                    m = m + ':';
 
-                if (m < 10) {
-                    m = "0" + m;
+                    var s = date.getSeconds();
+                    if (s < 10) {
+                        s = "0" + s;
+                    }
+                    entry.time = Y + M + D + h + m + s;
                 }
-                m = m + ':';
-
-                var s = date.getSeconds();
-                if (s < 10) {
-                    s = "0" + s;
-                }
-                entry.time = Y + M + D + h + m + s;
+                return result;
+            },
+            error: function (data) {
+                alert("请求失败!");
             }
-            return result;
         },
-        error: function (data) {
-            alert("请求失败!");
-        }
-    },
-    columns: [
-        {data: 'id'},
-        {data: 'time'},
-        {data: 'value'},
-        {data: 'temperature'},
-        {data: 'humidity'}
-    ],
-    "columnDefs": [
-        {responsivePriority: 1, target: 1},
-        {responsivePriority: 2, target: 2},
-        // {"width": "5%", "target": 0},
-        // {targets: [3], visible: false},
-        {className: "dt-center", "targets": [0, 1, 2, 3, 4]}
-        // {
-        //     "targets": -1,
-        //     "data": "",
+        columns: [
+            {data: 'id'},
+            {data: 'time'},
+            {data: 'value'},
+            {data: 'temperature'},
+            {data: 'humidity'}
+        ],
+        "columnDefs": [
+            {responsivePriority: 1, target: 1},
+            {responsivePriority: 2, target: 2},
+            // {"width": "5%", "target": 0},
+            // {targets: [3], visible: false},
+            {className: "dt-center", "targets": [0, 1, 2, 3, 4]}
+            // {
+            //     "targets": -1,
+            //     "data": "",
             // "render": function (data, type, row, meta) {
             //     var editstr = '<button class="btn btn-success btn-xs edit_onmouse_func" onclick="_editRow('${row["id"]}', '${row["name"]}', '${row["git_addr"]}', '${row["info"]}' )">编辑</button>'
             //     var delstr = '<button class="btn btn-info btn-xs" onclick="_deleteRow('${row["id"]}', '${row["name"]}')">删除</button>'
             //     return (editstr + delstr);
             // }
-        // },
-    ],
-
+            // },
+        ]
+    });
 });
 
 $('#contentAdd').submit(function (e) {

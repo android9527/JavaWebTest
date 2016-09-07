@@ -1,5 +1,6 @@
 package com.servlet.json;
 
+import com.servlet.json.entity.AvgData;
 import com.servlet.json.entity.Order;
 import com.servlet.json.entity.PMEntity;
 import com.servlet.json.entity.User;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -51,6 +53,9 @@ public class Sqlite3Util {
     private static final String LOGIN_SQL = "select * from " + TABLE_USER + " where name = ''{0}'' AND passwd = ''{1}''";
 
     private static final String INSET_PM_SQL = MessageFormat.format("insert into {0} (time, value, user_id, other, temperature, humidity) values (?, ?, ?, ?, ?, ?);", TABLE_PM);
+
+    private static final String GET_AVG_DATA =
+            "select *, avg(value) as newPm, avg(temperature) as newTemp, avg(humidity) as newHumi from " + TABLE_PM + " where user_id = {1} and time BETWEEN {2} AND {3};";
 
     /**
      * 获取
@@ -305,6 +310,62 @@ public class Sqlite3Util {
         return false;
     }
 
+
+    public static AvgData getAvgData(int userId, long startTime, long endTime) {
+        AvgData data = new AvgData();
+        ArrayList<String> labels = new ArrayList<>();
+        ArrayList<String> pm = new ArrayList<>();
+        ArrayList<String> temperature = new ArrayList<>();
+        ArrayList<String> humidity = new ArrayList<>();
+        data.setLabels(labels);
+        data.setHumidity(humidity);
+        data.setPm(pm);
+        data.setTemperature(temperature);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        ResultSet rs = null;
+        long hourTimeMillis = 60 * 60 * 1000;
+        try {
+            Connection connection = getConnection();
+            Statement stat = connection.createStatement();
+            for (int i = 0; i < 7; i++) {
+                String sql = MessageFormat.format(GET_AVG_DATA, TABLE_PM, userId, String.valueOf(startTime), String.valueOf(endTime));
+                rs = stat.executeQuery(sql);
+                labels.add(0, format.format(endTime));
+                if (rs != null && rs.next()) {
+                    String avgPm = rs.getString("newPm");
+                    if (StringUtils.isEmpty(avgPm))
+                        avgPm = "134";
+                    String avgTemp = rs.getString("newTemp");
+                    if (StringUtils.isEmpty(avgTemp))
+                        avgTemp = "23";
+                    String avgHumi = rs.getString("newHumi");
+                    if (StringUtils.isEmpty(avgHumi))
+                        avgHumi = "42";
+                    pm.add(0, avgPm);
+                    temperature.add(0, avgTemp);
+                    humidity.add(0, avgHumi);
+                } else {
+                    pm.add(0, "");
+                    temperature.add(0, "");
+                    humidity.add(0, "");
+                }
+                startTime -= hourTimeMillis;
+                endTime -= hourTimeMillis;
+            }
+            return data;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * 执行Sql

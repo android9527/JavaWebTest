@@ -97,7 +97,10 @@
         <servlet-name>PostPmServlet</servlet-name>
         <servlet-class>com.servlet.json.PostPmServlet</servlet-class>
     </servlet>
-
+    <servlet>
+        <servlet-name>GetAvgDataServlet</servlet-name>
+        <servlet-class>com.servlet.json.GetAvgDataServlet</servlet-class>
+    </servlet>
 
 
 
@@ -197,6 +200,11 @@
     <servlet-mapping>
         <servlet-name>PostPmServlet</servlet-name>
         <url-pattern>/servlet/PostPmServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GetAvgDataServlet</servlet-name>
+        <url-pattern>/servlet/GetAvgDataServlet</url-pattern>
     </servlet-mapping>
 
 
