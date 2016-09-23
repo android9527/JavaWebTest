@@ -85,7 +85,11 @@ $(document).ready(function () {
                     var date = new Date(parseInt(entry.time)); //传个时间戳过去就可以了
                     var Y = date.getFullYear() + '-';
                     var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-                    var D = date.getDate() + ' ';
+                    var D = date.getDate();
+                    if (D < 10) {
+                        D = "0" + D;
+                    }
+                    D = D + ' ';
                     var h = date.getHours() + ':';
                     var m = date.getMinutes();
 

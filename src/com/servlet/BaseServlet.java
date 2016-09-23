@@ -27,6 +27,23 @@ public class BaseServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         addHeader(response);
 
+        String result = "[\n" +
+                "  {\n" +
+                "    \"id\": 1,\n" +
+                "    \"name\": \"QA打包\",\n" +
+                "    \"type\": \"qa\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"id\": 2,\n" +
+                "    \"name\": \"Store打包\",\n" +
+                "    \"type\": \"store\"\n" +
+                "  },\n" +
+                "  {\n" +
+                "    \"id\": 3,\n" +
+                "    \"name\": \"多渠道打包\",\n" +
+                "    \"type\": \"channel\"\n" +
+                "  }\n" +
+                "]";
     }
 
 
